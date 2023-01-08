@@ -1,27 +1,42 @@
 mod args;
+
 use clap::Parser;
-use args::AniCLIArgs;
+use args::Cli;
+use args::Commands;
 
 fn main() {
-    let mut count = 1;
-    let response = reqwest::blocking::get("https://myanimelist.net/topanime.php")
+
+    let top = reqwest::blocking::get("https://myanimelist.net/topanime.php")
         .unwrap()
         .text()
         .unwrap();
 
-    //println!("response = {:?}", response);
-
-    let document = scraper::Html::parse_fragment(&response);
+    let top_anime_document = scraper::Html::parse_fragment(&top);
 
     let title_selector = scraper::Selector::parse("h3.hoverinfo_trigger").unwrap();
 
-    //println!("test -> {:?}",document);
     let mut v = Vec::new();
-    for x in document.select(&title_selector){
+    for x in top_anime_document.select(&title_selector){
         let x = x.text().collect::<Vec<_>>();
         v.push(x[0]);
-        println!("{}-{}",count,x[0]);
-        count = count + 1;
     }
-    let _args = AniCLIArgs::parse();
+
+    let _args = Cli::parse();
+
+    match &_args.command {
+        Commands::TopTen(_top_ten) => {
+            println!("Top Ten Anime");
+            for i in 0..10 {
+                println!("{}-{}",i+1,v[i]);
+            }
+        },
+        Commands::TopFifty(_top_fifty) => {
+            println!("Top Fifty Anime");
+            for i in 0..50 {
+                println!("{}-{}",i+1,v[i]);
+            }
+        },
+        Commands::TopAiring(_) => {}
+        Commands::TopUpcoming(_) => {}
+    }
 }
