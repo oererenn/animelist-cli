@@ -1,17 +1,14 @@
-use clap:: {
-    Args,
-    Parser,
-    Subcommand
-};
+use clap::{Args, Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
 #[command(propagate_version = true)]
+#[command(name = "MyApp")]
 pub struct Cli {
+    pub name: Option<String>,
     #[command(subcommand)]
     pub command: Commands,
 }
-
 
 #[derive(Subcommand)]
 pub enum Commands {
@@ -44,6 +41,3 @@ pub struct TopAiring {
 pub struct TopUpcoming {
     topupcoming: Vec<String>,
 }
-
-
-
