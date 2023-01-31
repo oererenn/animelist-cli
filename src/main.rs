@@ -37,10 +37,8 @@ fn main() {
     }
 
     fn get_top_anime() -> Vec<String> {
-        let top = reqwest::blocking::get("https://myanimelist.net/topanime.php")
-            .unwrap()
-            .text()
-            .unwrap();
+        let top = page_request("https://myanimelist.net/topanime.php");
+
 
         let top_anime_document = scraper::Html::parse_fragment(&top);
 
@@ -55,10 +53,7 @@ fn main() {
     }
 
     fn get_top_airing() -> Vec<String> {
-        let top = reqwest::blocking::get("https://myanimelist.net/topanime.php?type=airing")
-            .unwrap()
-            .text()
-            .unwrap();
+        let top = page_request("https://myanimelist.net/topanime.php?type=airing");
 
         let top_anime_document = scraper::Html::parse_fragment(&top);
 
@@ -73,10 +68,7 @@ fn main() {
     }
 
     fn get_top_upcoming() -> Vec<String> {
-        let top = reqwest::blocking::get("https://myanimelist.net/topanime.php?type=upcoming")
-            .unwrap()
-            .text()
-            .unwrap();
+        let top = page_request("https://myanimelist.net/topanime.php?type=upcoming");
 
         let top_anime_document = scraper::Html::parse_fragment(&top);
 
@@ -88,6 +80,14 @@ fn main() {
             v.push(x[0].to_string());
         }
         v
+    }
+
+    fn page_request(url: &str) -> String {
+        let top = reqwest::blocking::get(url)
+            .unwrap()
+            .text()
+            .unwrap();
+        top
     }
 
 
